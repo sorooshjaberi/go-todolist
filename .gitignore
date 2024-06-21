@@ -1,0 +1,10 @@
+#goland folder
+.idea
+
+#air (live reload ) folder
+tmp
+
+#configs and env variables
+.env
+config/config.yaml
+
