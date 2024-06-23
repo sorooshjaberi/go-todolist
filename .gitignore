@@ -5,6 +5,5 @@
 tmp
 
 #configs and env variables
-.env
 config/config.yaml
 

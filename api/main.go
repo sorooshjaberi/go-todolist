@@ -1,12 +1,19 @@
 package api
 
 import (
+	"booking/api/auth"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
 
 func InitiateRouter(server *gin.Engine) {
+
 	server.GET("/", func(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, gin.H{"message": "Hello!"})
 	})
+
+	v1 := server.Group("/v1")
+
+	auth.InitiateRouter(v1)
+
 }
