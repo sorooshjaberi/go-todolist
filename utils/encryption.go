@@ -1,9 +1,11 @@
 package utils
 
-import "golang.org/x/crypto/bcrypt"
+import (
+	"golang.org/x/crypto/bcrypt"
+)
 
 func HashText(text string) (string, error) {
-	hashedText, err := bcrypt.GenerateFromPassword([]byte(text), bcrypt.DefaultCost)
+	hashedText, err := bcrypt.GenerateFromPassword([]byte(text), bcrypt.MinCost)
 
 	if err != nil {
 		return "", err

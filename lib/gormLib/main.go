@@ -1,9 +1,9 @@
-package gorm
+package gormLib
 
 import (
-	"booking/lib/dotenv"
+	"booking/constants"
+	"booking/lib/dotenvLib"
 	"booking/models"
-	"booking/utils"
 	"fmt"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -18,13 +18,13 @@ var (
 func CreateConnection() *gorm.DB {
 	once.Do(func() {
 		dns := fmt.Sprintf("host=%v port=%v user=%v password=%v database=%v",
-			dotenv.GetEnv("DB.HOST"), dotenv.GetEnv("DB.PORT"), dotenv.GetEnv("DB.USER"), dotenv.GetEnv("DB.PASSWORD"), dotenv.GetEnv("DB.DATABASE"))
+			dotenvLib.GetEnv("DB.HOST"), dotenvLib.GetEnv("DB.PORT"), dotenvLib.GetEnv("DB.USER"), dotenvLib.GetEnv("DB.PASSWORD"), dotenvLib.GetEnv("DB.DATABASE"))
 
 		gormConfig := new(gorm.Config)
 
 		returnedDb, err := gorm.Open(postgres.Open(dns), gormConfig)
 
-		utils.HandleErrorByPanic(err)
+		constants.HandleErrorByPanic(err)
 
 		db = returnedDb
 
@@ -37,5 +37,5 @@ func MigrateDatabase() {
 	db := CreateConnection()
 	err := db.AutoMigrate(new(models.User), new(models.Todo))
 
-	utils.HandleErrorByPanic(err)
+	constants.HandleErrorByPanic(err)
 }
