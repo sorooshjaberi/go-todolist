@@ -21,7 +21,7 @@ func loginHandler(context *gin.Context) {
 
 	//cast body
 	if err := context.ShouldBindJSON(&body); err != nil {
-		context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -47,7 +47,7 @@ func signupHandler(context *gin.Context) {
 	var body models.User
 
 	if err := context.ShouldBindJSON(&body); err != nil {
-		context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
 
 	newUser, err := usersService.Signup(body.Username, body.Password)

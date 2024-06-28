@@ -20,9 +20,6 @@ func FindUserByUsername(username string) (user models.User, err error) {
 }
 
 func Login(username string, password string) (user models.User, err error) {
-	if username == "" || password == "" {
-		return user, constants.ErrEmptyCredentials
-	}
 	user, err = FindUserByUsername(username)
 
 	if err != nil {
@@ -41,10 +38,6 @@ func Login(username string, password string) (user models.User, err error) {
 
 func Signup(username string, password string) (user models.User, err error) {
 	db := gormLib.CreateConnection()
-
-	if username == "" || password == "" {
-		return user, constants.ErrEmptyCredentials
-	}
 
 	user, err = FindUserByUsername(username)
 
