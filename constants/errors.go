@@ -2,7 +2,6 @@ package constants
 
 import (
 	"errors"
-	"log"
 )
 
 var (
@@ -11,15 +10,6 @@ var (
 	ErrUserNotFound       = errors.New("no such user exists")
 	ErrInternalServer     = errors.New("internal server error")
 	ErrUserAlreadyExists  = errors.New("user already exists")
+	ErrInvalidJWTToken    = errors.New("invalid jwt token")
+	ErrMissingToken       = errors.New("missing token")
 )
-
-func HandleErrorSoft(err error) {
-	if err != nil {
-		log.Fatal(err)
-	}
-}
-func HandleErrorByPanic(err error) {
-	if err != nil {
-		panic(err)
-	}
-}

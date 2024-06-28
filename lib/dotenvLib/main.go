@@ -1,7 +1,7 @@
 package dotenvLib
 
 import (
-	"booking/constants"
+	"booking/utils/errorsUtils"
 	"encoding/json"
 	"fmt"
 	"github.com/spf13/viper"
@@ -20,7 +20,7 @@ func loadEnv() {
 
 	err := viper.ReadInConfig()
 
-	constants.HandleErrorByPanic(err)
+	errorsUtils.HandleErrorByPanic(err)
 
 	envVariables, _ := json.Marshal(viper.Get("env"))
 

@@ -1,8 +1,8 @@
 package models
 
 import (
-	"booking/constants"
-	"booking/utils"
+	"booking/utils/encryptionUtil"
+	"booking/utils/errorsUtils"
 	"gorm.io/gorm"
 )
 
@@ -14,8 +14,8 @@ type User struct {
 
 func (u *User) BeforeSave(tx *gorm.DB) (err error) {
 	if u.Password != "" {
-		hashedPassword, err := utils.HashText(u.Password)
-		constants.HandleErrorByPanic(err)
+		hashedPassword, err := encryptionUtil.HashText(u.Password)
+		errorsUtils.HandleErrorByPanic(err)
 		u.Password = hashedPassword
 	}
 	return nil

@@ -4,7 +4,7 @@ import (
 	"booking/constants"
 	"booking/lib/gormLib"
 	"booking/models"
-	"booking/utils"
+	"booking/utils/encryptionUtil"
 	"errors"
 	"gorm.io/gorm"
 )
@@ -19,27 +19,30 @@ func FindUserByUsername(username string) (user models.User, err error) {
 	return user, err
 }
 
-func Login(username string, password string) (user models.User, err error) {
-	user, err = FindUserByUsername(username)
+func Login(username string, password string) (string, error) {
+	var user models.User
+	user, err := FindUserByUsername(username)
 
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return user, constants.ErrUserNotFound
+			return "", constants.ErrUserNotFound
 		}
-		return user, err
+		return "", err
 	}
 
-	if !utils.VerifyHashedText(user.Password, password) {
-		return user, constants.ErrInvalidCredentials
+	if !encryptionUtil.VerifyHashedText(user.Password, password) {
+		return "", constants.ErrInvalidCredentials
 	}
 
-	return user, err
+	jwtToken, err := encryptionUtil.GenerateJWT(username)
+
+	return jwtToken, err
 }
 
-func Signup(username string, password string) (user models.User, err error) {
+func Signup(username string, password string) (models.User, error) {
 	db := gormLib.CreateConnection()
 
-	user, err = FindUserByUsername(username)
+	user, err := FindUserByUsername(username)
 
 	// If FindUserByUsername didn't return an error it means that it found a user which it shouldn't in sing up
 	//And if the error is the record not found it is a good news that user doesn't exist. otherwise it is an important error
