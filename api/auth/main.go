@@ -1,13 +1,13 @@
 package auth
 
 import (
-	"booking/constants"
-	"booking/lib/ginLib"
-	"booking/models"
-	usersService "booking/services/users"
 	"errors"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"todolist/constants"
+	"todolist/lib/ginLib"
+	"todolist/models"
+	usersService "todolist/services/users"
 )
 
 func InitiateRouter(server *gin.RouterGroup) {

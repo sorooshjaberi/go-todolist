@@ -1,12 +1,12 @@
-package encryptionUtil
+package encryptionUtils
 
 import (
-	"booking/constants"
-	"booking/lib/dotenvLib"
 	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
 	"log"
 	"time"
+	"todolist/constants"
+	"todolist/lib/dotenvLib"
 )
 
 var (
@@ -45,6 +45,10 @@ func GenerateJWT(username string) (string, error) {
 
 func ParseJWT(tokenString string) (string, error) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		_, ok := token.Method.(*jwt.SigningMethodHMAC)
+		if !ok {
+			return "", constants.ErrUnexpectedTokenMethod
+		}
 		return []byte(dotenvLib.GetEnv(constants.EnvKeys.JWTSecret).(string)), nil
 	})
 
@@ -54,6 +58,12 @@ func ParseJWT(tokenString string) (string, error) {
 
 	if !token.Valid {
 		return "", constants.ErrInvalidJWTToken
+	}
+
+	_, ok := token.Claims.(jwt.MapClaims)
+
+	if !ok {
+		return "", constants.ErrInvalidTokenClaims
 	}
 
 	sub, err := token.Claims.GetSubject()

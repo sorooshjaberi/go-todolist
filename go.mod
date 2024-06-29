@@ -1,4 +1,4 @@
-module booking
+module todolist
 
 go 1.22.3
 

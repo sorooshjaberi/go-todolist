@@ -1,14 +1,14 @@
 package gormLib
 
 import (
-	"booking/constants"
-	"booking/lib/dotenvLib"
-	"booking/models"
-	"booking/utils/errorsUtils"
 	"fmt"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"sync"
+	"todolist/constants"
+	"todolist/lib/dotenvLib"
+	"todolist/models"
+	"todolist/utils/errorsUtils"
 )
 
 var (

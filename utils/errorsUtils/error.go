@@ -1,10 +1,12 @@
 package errorsUtils
 
-import "log"
+import (
+	"fmt"
+)
 
 func HandleErrorSoft(err error) {
 	if err != nil {
-		log.Fatal(err)
+		fmt.Printf("Soft error occured: %v\n", err)
 	}
 }
 func HandleErrorByPanic(err error) {

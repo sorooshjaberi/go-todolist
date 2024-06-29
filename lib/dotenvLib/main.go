@@ -1,11 +1,11 @@
 package dotenvLib
 
 import (
-	"booking/utils/errorsUtils"
 	"encoding/json"
 	"fmt"
 	"github.com/spf13/viper"
 	"sync"
+	"todolist/utils/errorsUtils"
 )
 
 var (

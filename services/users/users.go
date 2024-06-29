@@ -1,12 +1,12 @@
 package usersService
 
 import (
-	"booking/constants"
-	"booking/lib/gormLib"
-	"booking/models"
-	"booking/utils/encryptionUtil"
 	"errors"
 	"gorm.io/gorm"
+	"todolist/constants"
+	"todolist/lib/gormLib"
+	"todolist/models"
+	"todolist/utils/encryptionUtils"
 )
 
 func FindUserByUsername(username string) (user models.User, err error) {
@@ -30,11 +30,11 @@ func Login(username string, password string) (string, error) {
 		return "", err
 	}
 
-	if !encryptionUtil.VerifyHashedText(user.Password, password) {
+	if !encryptionUtils.VerifyHashedText(user.Password, password) {
 		return "", constants.ErrInvalidCredentials
 	}
 
-	jwtToken, err := encryptionUtil.GenerateJWT(username)
+	jwtToken, err := encryptionUtils.GenerateJWT(username)
 
 	return jwtToken, err
 }

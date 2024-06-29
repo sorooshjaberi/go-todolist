@@ -1,9 +1,9 @@
 package models
 
 import (
-	"booking/utils/encryptionUtil"
-	"booking/utils/errorsUtils"
 	"gorm.io/gorm"
+	"todolist/utils/encryptionUtils"
+	"todolist/utils/errorsUtils"
 )
 
 type User struct {
@@ -14,7 +14,7 @@ type User struct {
 
 func (u *User) BeforeSave(tx *gorm.DB) (err error) {
 	if u.Password != "" {
-		hashedPassword, err := encryptionUtil.HashText(u.Password)
+		hashedPassword, err := encryptionUtils.HashText(u.Password)
 		errorsUtils.HandleErrorByPanic(err)
 		u.Password = hashedPassword
 	}
