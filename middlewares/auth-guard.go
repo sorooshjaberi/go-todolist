@@ -1,11 +1,14 @@
 package middlewares
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strconv"
 	"strings"
 	"todolist/constants"
 	"todolist/lib/ginLib"
+	usersService "todolist/services/users"
 	"todolist/utils/encryptionUtils"
 	"todolist/utils/errorsUtils"
 )
@@ -23,7 +26,9 @@ func AuthGuard() gin.HandlerFunc {
 
 		tokenString = tokenString[len("Bearer "):]
 
-		username, err := encryptionUtils.ParseJWT(tokenString)
+		userId, err := encryptionUtils.ParseJWT(tokenString)
+
+		fmt.Println("userId", userId)
 
 		if err != nil {
 			context.JSON(http.StatusUnauthorized, ginLib.ResponseModel{
@@ -34,7 +39,19 @@ func AuthGuard() gin.HandlerFunc {
 			return
 		}
 
-		context.Set(constants.Keys.RequestUser, username)
+		userIdUint, err := strconv.ParseUint(userId, 10, 64)
+
+		errorsUtils.HandleErrorSoft(err)
+
+		user, err := usersService.FindUserById(uint(userIdUint))
+
+		if err != nil {
+			context.JSON(http.StatusNotFound, ginLib.ResponseModel{
+				Error: err.Error(),
+			})
+		}
+
+		context.Set(constants.Keys.RequestUser, user)
 		context.Next()
 
 	}

@@ -9,12 +9,24 @@ import (
 	"todolist/utils/encryptionUtils"
 )
 
-func FindUserByUsername(username string) (user models.User, err error) {
+func FindUserByUsername(username string) (models.User, error) {
 	db := gormLib.CreateConnection()
 
+	var user models.User
 	result := db.Where(&models.User{Username: username}).First(&user)
 
-	err = result.Error
+	err := result.Error
+
+	return user, err
+}
+
+func FindUserById(id uint) (models.User, error) {
+	db := gormLib.CreateConnection()
+	var user models.User
+
+	result := db.First(&user, id)
+
+	err := result.Error
 
 	return user, err
 }
@@ -34,7 +46,7 @@ func Login(username string, password string) (string, error) {
 		return "", constants.ErrInvalidCredentials
 	}
 
-	jwtToken, err := encryptionUtils.GenerateJWT(username)
+	jwtToken, err := encryptionUtils.GenerateJWT(username, user.ID)
 
 	return jwtToken, err
 }

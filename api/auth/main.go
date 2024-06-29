@@ -10,7 +10,7 @@ import (
 	usersService "todolist/services/users"
 )
 
-func InitiateRouter(server *gin.RouterGroup) {
+func RegisterRouter(server *gin.RouterGroup) {
 	authRouter := server.Group("/auth")
 
 	authRouter.POST("/login", loginHandler)

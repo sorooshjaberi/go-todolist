@@ -1,12 +1,13 @@
 package encryptionUtils
 
 import (
+	"fmt"
 	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
-	"log"
 	"time"
 	"todolist/constants"
 	"todolist/lib/dotenvLib"
+	"todolist/utils/errorsUtils"
 )
 
 var (
@@ -28,16 +29,17 @@ func VerifyHashedText(hashedText string, originalText string) bool {
 	return err == nil
 }
 
-func GenerateJWT(username string) (string, error) {
+func GenerateJWT(username string, userId uint) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"sub": username,
-		"exp": time.Now().Add(ExpirationDuration).Unix(),
+		"sub":    username,
+		"userId": userId,
+		"exp":    time.Now().Add(ExpirationDuration).Unix(),
 	})
 
 	tokenString, err := token.SignedString([]byte(dotenvLib.GetEnv(constants.EnvKeys.JWTSecret).(string)))
 
 	if err != nil {
-		log.Fatal(err)
+		errorsUtils.HandleErrorSoft(err)
 	}
 
 	return tokenString, nil
@@ -60,15 +62,19 @@ func ParseJWT(tokenString string) (string, error) {
 		return "", constants.ErrInvalidJWTToken
 	}
 
-	_, ok := token.Claims.(jwt.MapClaims)
+	claims, ok := token.Claims.(jwt.MapClaims)
 
 	if !ok {
 		return "", constants.ErrInvalidTokenClaims
 	}
 
-	sub, err := token.Claims.GetSubject()
-	if err != nil {
-		return "", err
+	fmt.Println(claims)
+
+	if claims["userId"] == nil {
+		return "", constants.ErrInvalidTokenClaims
 	}
-	return sub, nil
+
+	userId := fmt.Sprint(claims["userId"])
+
+	return userId, nil
 }

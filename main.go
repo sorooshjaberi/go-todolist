@@ -16,7 +16,7 @@ func main() {
 
 	gormLib.MigrateDatabase()
 
-	api.InitiateRouter(server)
+	api.RegisterRouter(server)
 
 	err := server.Run(":8080")
 	errorsUtils.HandleErrorByPanic(err)
