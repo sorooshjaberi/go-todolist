@@ -14,13 +14,15 @@ func RegisterRouter(server *gin.Engine) {
 
 	v1 := server.Group("/v1")
 
+	//public routes
 	{
 		auth.RegisterRouter(v1)
 	}
+	//protectedRoutes
 	{
-		appRoute := v1.Group("/app")
-		appRoute.Use(middlewares.AuthGuard())
-		todos.RegisterRouter(appRoute)
+		protectedRoutes := v1.Group("/")
+		protectedRoutes.Use(middlewares.AuthGuard())
+		todos.RegisterRouter(protectedRoutes)
 	}
 
 	v1.GET("/", func(ctx *gin.Context) {

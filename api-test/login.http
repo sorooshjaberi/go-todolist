@@ -2,7 +2,6 @@ POST http://localhost:8080/v1/auth/login
 Accept: application/json
 authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTk3MzQwNDgsInN1YiI6InNvcm91c2giLCJ1c2VySWQiOjZ9.WAWvNKyxB8DwwJDjWCRBpsM413WJ6hC8KH7qEM_xdEo
 
-
 {
 "username"  : "soroush",
 "password" : "1"
