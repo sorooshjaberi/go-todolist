@@ -16,11 +16,16 @@ Authorization: Bearer {{access_token}}
 
 ### Edit a todo
 
-PUT {{baseUrl}}/todos/3
+PUT {{baseUrl}}/todos/10
 Authorization: Bearer {{access_token}}
 
 {
-"description" :"",
-"title" : "Editted title"
+ "done" : false,
+ "title" : ""
 }
+
+### Delete a todo
+
+DELETE {{baseUrl}}/todos/8
+Authorization: Bearer {{access_token}}
 

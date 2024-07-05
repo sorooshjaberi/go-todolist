@@ -1,7 +1,6 @@
 package middlewares
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
@@ -18,8 +17,6 @@ func AuthGuard() gin.HandlerFunc {
 
 		tokenString := context.GetHeader("Authorization")
 
-		fmt.Println(tokenString)
-
 		if tokenString == "" || strings.Trim(tokenString, " ") == "Bearer" {
 			context.JSON(http.StatusUnauthorized, ginLib.ResponseModel{
 				Error: constants.ErrMissingToken.Error(),
@@ -29,8 +26,6 @@ func AuthGuard() gin.HandlerFunc {
 		tokenString = tokenString[len("Bearer "):]
 
 		userId, err := encryptionUtils.ParseJWT(tokenString)
-
-		fmt.Println("userId", userId)
 
 		if err != nil {
 			context.JSON(http.StatusUnauthorized, ginLib.ResponseModel{

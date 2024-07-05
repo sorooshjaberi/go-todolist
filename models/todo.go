@@ -7,7 +7,7 @@ import (
 
 type Todo struct {
 	gorm.Model
-	Title       string     `json:"title"`
+	Title       *string     `json:"title"`
 	Done        *bool      `json:"done" gorm:"default:false"`
 	Description *string    `json:"description"`
 	Deadline    *time.Time `json:"deadline"`

@@ -30,12 +30,40 @@ func CreateTodo(todo models.Todo) (*models.Todo, error) {
 func EditTodo(todo models.Todo) (*models.Todo, error) {
 	db := gormLib.CreateConnection()
 
-	//mapStringTodo := structs.Map(todo)
+	var queryTodo models.Todo
 
-	//j, _ := json.Marshal(mapStringTodo)
-	//fmt.Println(string(j))
+	queryTodo.ID = todo.ID
+	queryTodo.UserID = todo.UserID
 
-	result := db.Model(&todo).Select("title", "done", "description", "deadline").Updates(&todo)
+	//check if not exists
+	if result := db.Where(&queryTodo).First(&models.Todo{}); result.Error != nil {
+		return nil, result.Error
+	}
+
+
+	result := db.Model(&models.Todo{}).Where(&queryTodo).Updates(&todo)
+
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return &todo, nil
+}
+
+func DeleteTodo(todo models.Todo) (*models.Todo, error) {
+	db := gormLib.CreateConnection()
+
+	var queryTodo models.Todo
+
+	queryTodo.ID = todo.ID
+	queryTodo.UserID = todo.UserID
+
+	//check if not exists
+	if result := db.Where(&queryTodo).First(&models.Todo{}); result.Error != nil {
+		return nil, result.Error
+	}
+
+	result := db.Model(&models.Todo{}).Where(&queryTodo).Delete(&todo)
 
 	if result.Error != nil {
 		return nil, result.Error

@@ -15,7 +15,7 @@ func RegisterRouter(server *gin.RouterGroup) {
 	todosRouter.GET("/", getAllTodosHandler)
 	todosRouter.POST("/", createTodoHandler)
 	todosRouter.PUT("/:todoId", editTodoHandler)
-
+	todosRouter.DELETE("/:todoId", deleteTodoHandler)
 }
 
 func getAllTodosHandler(context *gin.Context) {
@@ -59,8 +59,6 @@ func createTodoHandler(context *gin.Context) {
 		return
 	}
 
-	currentUserId := currentUser.ID
-
 	var newTodo models.Todo
 
 	if err := context.ShouldBindJSON(&newTodo); err != nil {
@@ -70,7 +68,7 @@ func createTodoHandler(context *gin.Context) {
 		return
 	}
 
-	newTodo.UserID = currentUserId
+	newTodo.UserID = currentUser.ID
 
 	createdTodo, createTodoError := todos.CreateTodo(newTodo)
 
@@ -84,21 +82,19 @@ func createTodoHandler(context *gin.Context) {
 
 func editTodoHandler(context *gin.Context) {
 
-	todoId, convertTodoIdToStringErr := strconv.Atoi(context.Param("todoId"))
+	todoId, convertTodoIdToStringError := strconv.Atoi(context.Param("todoId"))
 
-	if convertTodoIdToStringErr != nil {
-		context.JSON(http.StatusBadRequest, ginLib.ResponseModel{Error: constants.ErrIdShouldBeNumber})
+	if convertTodoIdToStringError != nil {
+		context.JSON(http.StatusBadRequest, ginLib.ResponseModel{Error: constants.ErrIdShouldBeNumber.Error()})
 		return
 	}
 
-	currentUser, errorGetUser := ginLib.GetUserFromContext(context)
+	currentUser, getUserError := ginLib.GetUserFromContext(context)
 
-	if errorGetUser != nil {
+	if getUserError != nil {
 		context.JSON(http.StatusInternalServerError, ginLib.ResponseModel{Error: constants.ErrInternalServer.Error()})
 		return
 	}
-
-	currentUserId := currentUser.ID
 
 	var todo models.Todo
 
@@ -110,7 +106,7 @@ func editTodoHandler(context *gin.Context) {
 	}
 
 	todo.ID = uint(todoId)
-	todo.UserID = currentUserId
+	todo.UserID = currentUser.ID
 
 	updatedTodo, editTodoError := todos.EditTodo(todo)
 
@@ -122,3 +118,33 @@ func editTodoHandler(context *gin.Context) {
 	context.JSON(http.StatusCreated, ginLib.ResponseModel{Data: updatedTodo})
 }
 
+func deleteTodoHandler(context *gin.Context) {
+	todoId, convertTodoIdToIntError := strconv.Atoi(context.Param("todoId"))
+
+	if convertTodoIdToIntError != nil {
+		context.JSON(http.StatusBadRequest, ginLib.ResponseModel{Error: constants.ErrIdShouldBeNumber.Error()})
+		return
+	}
+	currentUser, getUserError := ginLib.GetUserFromContext(context)
+
+	if getUserError != nil {
+		context.JSON(http.StatusInternalServerError, ginLib.ResponseModel{Error: constants.ErrInternalServer.Error()})
+		return
+	}
+
+	var todo models.Todo
+
+	todo.UserID = currentUser.ID
+
+	todo.ID = uint(todoId)
+
+	deletedTodo, deleteTodoError := todos.DeleteTodo(todo)
+
+	if deleteTodoError != nil {
+		context.JSON(http.StatusInternalServerError, ginLib.ResponseModel{Error: deleteTodoError.Error()})
+		return
+	}
+
+	context.JSON(http.StatusNoContent, ginLib.ResponseModel{Data: deletedTodo})
+
+}

@@ -1,9 +1,18 @@
+### Signup
+POST {{baseUrl}}/auth/signup
+
+{
+"username" : "soroush2",
+"password" : "222"
+}
+
 ### Login
 
 POST {{baseUrl}}/auth/login
 Accept: application/json
 
 {
-"username"  : "soroush",
-"password" : "1"
+"username"  : "soroush2",
+"password" : "222"
 }
+
