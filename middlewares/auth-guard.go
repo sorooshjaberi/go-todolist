@@ -18,6 +18,8 @@ func AuthGuard() gin.HandlerFunc {
 
 		tokenString := context.GetHeader("Authorization")
 
+		fmt.Println(tokenString)
+
 		if tokenString == "" || strings.Trim(tokenString, " ") == "Bearer" {
 			context.JSON(http.StatusUnauthorized, ginLib.ResponseModel{
 				Error: constants.ErrMissingToken.Error(),

@@ -45,3 +45,17 @@ func MigrateDatabase() {
 
 	errorsUtils.HandleErrorByPanic(err)
 }
+
+func GetOffsetUsingPageSize(page int, perPage int) int {
+	return (page - 1) * perPage
+}
+
+func Paginate(page int, perPage int) func(db *gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		if page <= 0 {
+			page = 1
+		}
+		offset := GetOffsetUsingPageSize(page, perPage)
+		return db.Offset(offset).Limit(perPage)
+	}
+}
