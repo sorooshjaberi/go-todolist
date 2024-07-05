@@ -12,12 +12,13 @@ import (
 
 func RegisterRouter(server *gin.RouterGroup) {
 	todosRouter := server.Group("/todos")
-	todosRouter.GET("/", getAllTodos)
-	todosRouter.POST("/", createTodo)
+	todosRouter.GET("/", getAllTodosHandler)
+	todosRouter.POST("/", createTodoHandler)
+	todosRouter.PUT("/:todoId", editTodoHandler)
 
 }
 
-func getAllTodos(context *gin.Context) {
+func getAllTodosHandler(context *gin.Context) {
 	page, pageErr := strconv.Atoi(context.DefaultQuery("page", "1"))
 	if pageErr != nil {
 		context.JSON(http.StatusBadRequest, ginLib.ResponseModel{Error: pageErr.Error()})
@@ -51,7 +52,7 @@ func getAllTodos(context *gin.Context) {
 	})
 }
 
-func createTodo(context *gin.Context) {
+func createTodoHandler(context *gin.Context) {
 	currentUser, getUserError := ginLib.GetUserFromContext(context)
 	if getUserError != nil {
 		context.JSON(http.StatusInternalServerError, ginLib.ResponseModel{Error: constants.ErrInternalServer.Error()})
@@ -69,10 +70,55 @@ func createTodo(context *gin.Context) {
 		return
 	}
 
-	createdTodo, createTodoError := todos.CreateTodo(currentUserId, newTodo)
+	newTodo.UserID = currentUserId
+
+	createdTodo, createTodoError := todos.CreateTodo(newTodo)
+
 	if createTodoError != nil {
 		context.JSON(http.StatusInternalServerError, ginLib.ResponseModel{Error: createTodoError.Error()})
 		return
 	}
+
 	context.JSON(http.StatusCreated, ginLib.ResponseModel{Data: createdTodo})
 }
+
+func editTodoHandler(context *gin.Context) {
+
+	todoId, convertTodoIdToStringErr := strconv.Atoi(context.Param("todoId"))
+
+	if convertTodoIdToStringErr != nil {
+		context.JSON(http.StatusBadRequest, ginLib.ResponseModel{Error: constants.ErrIdShouldBeNumber})
+		return
+	}
+
+	currentUser, errorGetUser := ginLib.GetUserFromContext(context)
+
+	if errorGetUser != nil {
+		context.JSON(http.StatusInternalServerError, ginLib.ResponseModel{Error: constants.ErrInternalServer.Error()})
+		return
+	}
+
+	currentUserId := currentUser.ID
+
+	var todo models.Todo
+
+	if err := context.ShouldBindJSON(&todo); err != nil {
+		context.JSON(http.StatusBadRequest, ginLib.ResponseModel{
+			Error: err.Error(),
+		})
+		return
+	}
+
+	todo.ID = uint(todoId)
+	todo.UserID = currentUserId
+
+	updatedTodo, editTodoError := todos.EditTodo(todo)
+
+	if editTodoError != nil {
+		context.JSON(http.StatusInternalServerError, ginLib.ResponseModel{Error: editTodoError.Error()})
+		return
+	}
+
+	context.JSON(http.StatusCreated, ginLib.ResponseModel{Data: updatedTodo})
+}
+

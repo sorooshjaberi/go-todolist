@@ -1,8 +1,0 @@
-POST {{baseUrl}}/todos
-Accept: application/json
-Authorization: Bearer {{access_token}}
-
-{
-"title" : "Test2",
-"description" : "THis is test2"
-}

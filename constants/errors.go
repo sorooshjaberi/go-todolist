@@ -14,4 +14,6 @@ var (
 	ErrMissingToken          = errors.New("missing token")
 	ErrUnexpectedTokenMethod = errors.New("unexpected token method")
 	ErrInvalidTokenClaims    = errors.New("invalid token claims")
+	ErrInvalidPayload        = errors.New("invalid payload")
+	ErrIdShouldBeNumber      = errors.New("id should be a number")
 )
