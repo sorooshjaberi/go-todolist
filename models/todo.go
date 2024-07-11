@@ -1,12 +1,12 @@
 package models
 
 import (
-	"gorm.io/gorm"
 	"time"
+	"todolist/lib/gormLib"
 )
 
 type Todo struct {
-	gorm.Model
+	Model gormLib.Model
 	Title       *string     `json:"title"`
 	Done        *bool      `json:"done" gorm:"default:false"`
 	Description *string    `json:"description"`

@@ -2,14 +2,15 @@ package models
 
 import (
 	"gorm.io/gorm"
+	"todolist/lib/gormLib"
 	"todolist/utils/encryptionUtils"
 	"todolist/utils/errorsUtils"
 )
 
 type User struct {
-	gorm.Model
+	gormLib.Model
 	Username string `json:"username" binding:"required" gorm:"unique"`
-	Email string `json:"email" binding:"required" gorm:"unique"`
+	Email string `json:"email" gorm:"unique"`
 	Password string `json:"password" binding:"required"`
 }
 

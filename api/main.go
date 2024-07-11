@@ -7,10 +7,13 @@ import (
 	"todolist/api/auth"
 	"todolist/api/todos"
 	"todolist/constants"
+	"todolist/lib/ginLib"
 	"todolist/middlewares"
 )
 
 func RegisterRouter(server *gin.Engine) {
+
+	ginLib.Cors(server)
 
 	v1 := server.Group("/v1")
 
