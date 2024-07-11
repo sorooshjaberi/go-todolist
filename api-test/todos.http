@@ -4,8 +4,8 @@ POST {{baseUrl}}/todos
 Authorization: Bearer {{access_token}}
 
 {
-"title" : "Test2",
-"description" : "THis is test2"
+"title" : "Test4",
+"description" : "THis is test4"
 }
 
 ### Get all todos
@@ -13,6 +13,10 @@ Authorization: Bearer {{access_token}}
 GET {{baseUrl}}/todos
 Authorization: Bearer {{access_token}}
 
+### Get a todo
+
+GET {{baseUrl}}/todos/1
+Authorization: Bearer {{access_token}}
 
 ### Edit a todo
 
@@ -20,8 +24,8 @@ PUT {{baseUrl}}/todos/10
 Authorization: Bearer {{access_token}}
 
 {
- "done" : false,
- "title" : ""
+ "done" : true,
+ "title" : "Soroush"
 }
 
 ### Delete a todo

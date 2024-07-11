@@ -1,7 +1,9 @@
 package todos
 
 import (
+	"errors"
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 	"net/http"
 	"strconv"
 	"todolist/constants"
@@ -13,9 +15,44 @@ import (
 func RegisterRouter(server *gin.RouterGroup) {
 	todosRouter := server.Group("/todos")
 	todosRouter.GET("/", getAllTodosHandler)
+	todosRouter.GET("/:todoId", getTodoHandler)
 	todosRouter.POST("/", createTodoHandler)
 	todosRouter.PUT("/:todoId", editTodoHandler)
 	todosRouter.DELETE("/:todoId", deleteTodoHandler)
+}
+
+func getTodoHandler(context *gin.Context) {
+	todoId := context.Param("todoId")
+
+	todoIdNum, convertTodoIdToNumError := strconv.Atoi(todoId)
+
+	if convertTodoIdToNumError != nil {
+		context.JSON(http.StatusBadRequest, ginLib.ResponseModel{Error: constants.ErrIdShouldBeNumber})
+		return
+	}
+
+	currentUser, getUserError := ginLib.GetUserFromContext(context)
+
+	if getUserError != nil {
+		context.JSON(http.StatusInternalServerError, ginLib.ResponseModel{Error: constants.ErrInternalServer.Error()})
+		return
+	}
+
+	currentUserId := currentUser.ID
+
+	todo, err := todos.GetTodo(currentUserId, uint(todoIdNum))
+
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			context.JSON(http.StatusNotFound, ginLib.ResponseModel{Error: err.Error()})
+			return
+		}
+		context.JSON(http.StatusInternalServerError, ginLib.ResponseModel{Error: err.Error()})
+		return
+	}
+
+	context.JSON(http.StatusOK, ginLib.ResponseModel{Data: todo})
+
 }
 
 func getAllTodosHandler(context *gin.Context) {

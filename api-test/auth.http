@@ -2,8 +2,9 @@
 POST {{baseUrl}}/auth/signup
 
 {
-"username" : "soroush2",
-"password" : "222"
+"username" : "soroush3",
+"password" : "222",
+"email" : "sorooshjaberi@gmail.com"
 }
 
 ### Login

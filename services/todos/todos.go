@@ -9,9 +9,23 @@ func GetAllTodos(userId uint, page int, perPage int) ([]models.Todo, error) {
 	db := gormLib.CreateConnection()
 	var todos []models.Todo
 
-	db.Scopes(gormLib.Paginate(page, perPage)).Where(models.Todo{UserID: userId}).Find(&todos)
+	result := db.Scopes(gormLib.Paginate(page, perPage)).Where(models.Todo{UserID: userId}).Find(&todos)
 
-	return todos, nil
+	return todos, result.Error
+}
+
+func GetTodo(userId uint, todoId uint) (models.Todo, error) {
+	db := gormLib.CreateConnection()
+	var todo models.Todo
+
+	var queryTodo models.Todo
+	queryTodo.ID = todoId
+	queryTodo.UserID = userId
+
+	result := db.Where(&queryTodo).First(&todo)
+
+	return todo, result.Error
+
 }
 
 func CreateTodo(todo models.Todo) (*models.Todo, error) {
@@ -39,7 +53,6 @@ func EditTodo(todo models.Todo) (*models.Todo, error) {
 	if result := db.Where(&queryTodo).First(&models.Todo{}); result.Error != nil {
 		return nil, result.Error
 	}
-
 
 	result := db.Model(&models.Todo{}).Where(&queryTodo).Updates(&todo)
 
